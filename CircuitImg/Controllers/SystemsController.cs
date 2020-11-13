@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace CircuitImg.Controllers
+namespace WebServices.Controllers
 {
     [ApiController]
     [Route("test")]

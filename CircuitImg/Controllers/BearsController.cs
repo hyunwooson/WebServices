@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 
-namespace CircuitImg.Controllers
+namespace WebServices.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -61,6 +61,14 @@ namespace CircuitImg.Controllers
 
                     targetNode = doc.DocumentNode;
 
+                    var gameTimeNode = targetNode.SelectSingleNode("//div[@class='BNeawe s3v9rd AP7Wnd lRVwie']");
+                    gameTime = "";
+                    if (gameTimeNode != null)
+                        gameTime = targetNode.SelectSingleNode("//div[@class='BNeawe s3v9rd AP7Wnd lRVwie']").InnerText;
+
+                    if (gameTime.ToUpper().Contains("YESTERDAY"))
+                        continue;
+
                     break;
                 }
             }
@@ -83,11 +91,6 @@ namespace CircuitImg.Controllers
             gameTitle = "";
             if (gameTitleNode != null)
                 gameTitle = targetNode.SelectSingleNode("//div[@class='BNeawe tAd8D AP7Wnd']").InnerText.Replace("�", "/");
-
-            var gameTimeNode = targetNode.SelectSingleNode("//div[@class='BNeawe s3v9rd AP7Wnd lRVwie']");
-            gameTime = "";
-            if (gameTimeNode != null)
-                gameTime = targetNode.SelectSingleNode("//div[@class='BNeawe s3v9rd AP7Wnd lRVwie']").InnerText;
 
             var awayInfoNode = targetNode.SelectSingleNode("//div[@class='AP66Yc Q38Sd']");
             string awayInfo = "";

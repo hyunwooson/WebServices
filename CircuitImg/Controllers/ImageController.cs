@@ -9,7 +9,7 @@ using Newtonsoft.Json.Linq;
 using System.Net;
 using System.IO;
 
-namespace CircuitImg.Controllers
+namespace WebServices.Controllers
 {
     [ApiController]
     [Route("[controller]")]
