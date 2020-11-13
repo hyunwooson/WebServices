@@ -13,13 +13,13 @@ namespace WebServices.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class ImageController : ControllerBase
+    public class F1Controller : ControllerBase
     {
         
 
-        private readonly ILogger<ImageController> _logger;
+        private readonly ILogger<F1Controller> _logger;
 
-        public ImageController(ILogger<ImageController> logger)
+        public F1Controller(ILogger<F1Controller> logger)
         {
             _logger = logger;
         }

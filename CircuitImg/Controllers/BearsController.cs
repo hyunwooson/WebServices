@@ -82,7 +82,6 @@ namespace WebServices.Controllers
                     { "gameTime" , gameTime  },
                     { "oppScore", awayScore },
                     { "oppTeam" , awayTeam  },
-                    { "oppImg"  , GetTeamImage(awayTeam)   },
                     { "bearsScore", homeScore },
                 }.ToString();
             }
@@ -129,37 +128,8 @@ namespace WebServices.Controllers
                 { "gameTime" , gameTime  },
                 { "oppScore", home? awayScore: homeScore },
                 { "oppTeam" , home? awayTeam : homeTeam  },
-                { "oppImg"  , GetTeamImage(home? awayTeam : homeTeam)   },
                 { "bearsScore", home? homeScore:awayScore },
-                { "bearsImg", "https://upload.wikimedia.org/wikipedia/en/9/98/Doosan_Bears.svg" },
             }.ToString();
-        }
-
-        private string GetTeamImage(string team)
-        {
-            switch (team)
-            {
-                case "NC":
-                    return "https://upload.wikimedia.org/wikipedia/en/5/54/NC_Dinos_Emblem.svg";
-                case "KT":
-                    return "https://upload.wikimedia.org/wikipedia/en/e/e5/KT_Wiz.svg";
-                case "LG":
-                    return "https://lgcxydabfbch3774324.cdn.ntruss.com/KBO_IMAGE/emblem/regular/fixed/emblemL_LG.png?version=20190123";
-                case "Kiwoom":
-                    return "https://lgcxydabfbch3774324.cdn.ntruss.com/KBO_IMAGE/emblem/regular/fixed/emblemL_WO.png?version=20190123";
-                case "KIA":
-                    return "https://lgcxydabfbch3774324.cdn.ntruss.com/KBO_IMAGE/emblem/regular/fixed/emblemL_HT.png?version=20190123";
-                case "Lotte":
-                    return "https://lgcxydabfbch3774324.cdn.ntruss.com/KBO_IMAGE/emblem/regular/fixed/emblemL_LT.png?version=20190123";
-                case "Samsung":
-                    return "https://upload.wikimedia.org/wikipedia/en/0/0e/Samsung_Lions.svg";
-                case "SK":
-                    return "https://lgcxydabfbch3774324.cdn.ntruss.com/KBO_IMAGE/emblem/regular/fixed/emblemL_SK.png?version=20200123";
-                case "Hanwha":
-                    return "https://upload.wikimedia.org/wikipedia/en/d/d3/Hanwha_Eagles.svg";
-                default:
-                    return "https://upload.wikimedia.org/wikipedia/en/9/98/Doosan_Bears.svg";
-            }
         }
     }
 }

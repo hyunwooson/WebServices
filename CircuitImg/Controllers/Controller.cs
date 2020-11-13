@@ -13,21 +13,9 @@ namespace WebServices.Controllers
     [ApiController]
     public class Controller : ControllerBase
     {
-        static SerialPort _serialPort = new SerialPort("COM4", 9600);
-
         [HttpGet]
-        public string Get(string interval)
+        public string Get()
         {
-            string _interval = "1000";
-
-            if (int.TryParse(interval, out int a))
-                _interval = interval;
-
-            if (!_serialPort.IsOpen)
-                _serialPort.Open();
-            var buffer = Encoding.UTF8.GetBytes(_interval);
-            _serialPort.Write(buffer,0,buffer.Length);
-            _serialPort.Close();
             return "Hello World";
         }
     }
