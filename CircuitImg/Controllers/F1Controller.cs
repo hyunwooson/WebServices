@@ -77,7 +77,6 @@ namespace WebServices.Controllers
 
             time = evntTime.AddSeconds(timeShift).ToString("HH:mm");
 
-
             switch (evntName)
             {
                 case string a when a.Contains("PORTUGAL"): 

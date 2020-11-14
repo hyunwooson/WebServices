@@ -69,6 +69,23 @@ namespace WebServices.Controllers
                     if (gameTime.ToUpper().Contains("YESTERDAY"))
                         continue;
 
+                    if(i == 0 && gameTime.ToUpper().Contains("FINAL"))
+                    {
+                        var _gtArray = gameTime.Split(',');
+                        bool continueFlag = false;
+                        foreach (var item in _gtArray)
+                        {
+                            if(DateTime.TryParse(item.Trim(), out DateTime dt) && dt< DateTime.Today)
+                            {
+                                continueFlag = true;
+                                break;
+                            }
+                        }
+                        if (continueFlag)
+                            continue;
+                    }
+                        
+
                     break;
                 }
             }
