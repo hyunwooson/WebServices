@@ -44,12 +44,6 @@ namespace WebServices.Controllers
                 timeShift = 0;
             }
 
-            string url = "";
-            string flag = "";
-            string title = "";
-            string date = "";
-            string time = "";
-            string session = "";
             string circuit = "";
             string lateral = "";
             string longitudinal = "";
@@ -82,9 +76,11 @@ namespace WebServices.Controllers
                 }
             }
 
-            title = evntName.Substring(0, evntName.IndexOf("2020") - 1);
-            session = evntName.Substring(evntName.IndexOf("-") + 2);
+            string title = evntName.Substring(0, evntName.IndexOf("2020") - 1);
 
+            string session = evntName.Substring(evntName.IndexOf("-") + 2);
+
+            string date;
             if (evntTime.AddSeconds(timeShift).Date == DateTime.UtcNow.AddSeconds(timeShift).Date)
                 date = "Today";
             else if (evntTime.AddSeconds(timeShift).Date == DateTime.UtcNow.AddDays(1).AddSeconds(timeShift).Date)
@@ -92,12 +88,16 @@ namespace WebServices.Controllers
             else
                 date = evntTime.AddSeconds(timeShift).ToString("MMM. d, yyyy");
 
-            time = evntTime.AddSeconds(timeShift).ToString("HH:mm");
+            string time = evntTime.AddSeconds(timeShift).ToString("HH:mm");
 
 
+
+            string url;
+
+            string flag;
             switch (evntName)
             {
-                case string a when a.Contains("PORTUGAL"): 
+                case string a when a.Contains("PORTUGAL"):
                     url = "https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Track%20icons%204x3/Portugal%20carbon.png.transform/3col/image.png";
                     flag = "https://cdn.countryflags.com/thumbs/portugal/flag-wave-250.png";
                     break;
@@ -130,8 +130,6 @@ namespace WebServices.Controllers
                     flag = "";
                     break;
             }
-
-            string weather = "";
 
             string owmUrl = $"https://api.openweathermap.org/data/2.5/onecall?lat={lateral}&lon={longitudinal}&appid=14946c8bd54652131af03989ad323e19&unit=metric";
             HttpWebRequest weatherRequest = (HttpWebRequest)WebRequest.Create(owmUrl);
