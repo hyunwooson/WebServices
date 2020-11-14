@@ -66,7 +66,35 @@ namespace WebServices.Controllers
         }
         #endregion
 
+        #region Weather
+        [HttpGet]
+        [Route("weather")]
+        public ActionResult GetWeatherIcon(string code)
+        {
+            if (code == null)
+                code = "";
 
+            else if (int.TryParse(code[0].ToString(), out int a))
+                code = "_" + code;
+
+            var target = Properties.Weather.Resource.ResourceManager.GetObject(code);
+
+            if (target == null)
+            {
+                target = Properties.Weather.Resource.ResourceManager.GetObject(code.Replace("_n",""));
+            }
+
+            if (target == null)
+            {
+                target = Properties.Weather.Resource.ResourceManager.GetObject(code.Substring(0,2)+"00");
+            }
+
+            if (target != null)
+                return File((byte[])target, "image/png");
+            else
+                return File(Properties.Common.Resource.notfound, "image/png");
+        }
+        #endregion
 
     }
 }

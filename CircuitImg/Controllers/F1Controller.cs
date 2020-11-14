@@ -15,8 +15,20 @@ namespace WebServices.Controllers
     [Route("api/[controller]")]
     public class F1Controller : ControllerBase
     {
-        
-
+        public class WeatherInfo
+        {
+            public double dt;
+            public double sunset;
+            public string night = "";
+            public List<Weather> weather;
+        }
+        public class Weather
+        {
+            public string id;
+            public string main;
+            public string description;
+            public string icon;
+        }
         private readonly ILogger<F1Controller> _logger;
 
         public F1Controller(ILogger<F1Controller> logger)
@@ -39,6 +51,8 @@ namespace WebServices.Controllers
             string time = "";
             string session = "";
             string circuit = "";
+            string lateral = "";
+            string longitudinal = "";
 
             string text = "";
 
@@ -61,6 +75,9 @@ namespace WebServices.Controllers
                     evntName = calendar.Events[i].Summary;
                     evntTime = calendar.Events[i].Start.AsUtc;
                     circuit = calendar.Events[i].Location;
+                    var loc = Properties.F1.Resource.ResourceManager.GetObject(circuit.ToUpper().Replace(' ', '_')).ToString().Split(',');
+                    lateral = loc[0];
+                    longitudinal = loc[1];
                     break;
                 }
             }
@@ -76,6 +93,7 @@ namespace WebServices.Controllers
                 date = evntTime.AddSeconds(timeShift).ToString("MMM. d, yyyy");
 
             time = evntTime.AddSeconds(timeShift).ToString("HH:mm");
+
 
             switch (evntName)
             {
@@ -113,6 +131,81 @@ namespace WebServices.Controllers
                     break;
             }
 
+            string weather = "";
+
+            string owmUrl = $"https://api.openweathermap.org/data/2.5/onecall?lat={lateral}&lon={longitudinal}&appid=14946c8bd54652131af03989ad323e19&unit=metric";
+            HttpWebRequest weatherRequest = (HttpWebRequest)WebRequest.Create(owmUrl);
+            weatherRequest.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+
+            string resultTxt = "";
+
+            using (HttpWebResponse response = (HttpWebResponse)weatherRequest.GetResponse())
+            using (Stream stream = response.GetResponseStream())
+            using (StreamReader reader = new StreamReader(stream))
+            {
+                resultTxt = reader.ReadToEnd();
+            }
+
+            var result = JObject.Parse(resultTxt);
+
+            string weatherCd = "";
+
+            if (result.TryGetValue("cod",out JToken jt))
+            {
+            }
+            else
+            {
+                if (date.Equals("Today")|| date.Equals("Tomorrow"))
+                {
+                    var array = result["hourly"].Value<JArray>();
+                    List<WeatherInfo> forecasts = array.ToObject<List<WeatherInfo>>();
+                    foreach (var item in forecasts)
+                    {
+                        var weatime = UnixTimeStampToDateTime(item.dt, 0);
+                        if (evntTime < weatime)
+                        {
+                            weatherCd = item.weather[0].id;
+                            break;
+                        }
+                    }
+                    var array_d = result["daily"].Value<JArray>();
+                    List<WeatherInfo> forecasts_d = array_d.ToObject<List<WeatherInfo>>();
+                    foreach (var item in forecasts_d)
+                    {
+                        var weatime = UnixTimeStampToDateTime(item.dt, 0);
+                        if (evntTime.Date.Equals(weatime.Date))
+                        {
+                            var sunsetTime = UnixTimeStampToDateTime(item.sunset, 0);
+                            if (evntTime.AddHours(1) > sunsetTime)
+                                weatherCd = weatherCd + "_n";
+                           
+                            break;
+                        }
+                    }
+
+                }
+                else
+                {
+                    var array = result["daily"].Value<JArray>();
+                    List<WeatherInfo> forecasts = array.ToObject<List<WeatherInfo>>();
+                    foreach (var item in forecasts)
+                    {
+                        var weatime = UnixTimeStampToDateTime(item.dt, 0);
+                        if (evntTime.Date.Equals(weatime.Date))
+                        {
+                            if (evntTime.AddHours(1) > UnixTimeStampToDateTime(item.sunset, 0))
+                                weatherCd = item.weather[0].id + "_n";
+                            else
+                                weatherCd = item.weather[0].id;
+                            break;
+                        }
+                    }
+                    weatherCd = "_000";
+                }
+            }
+
+
+
             return new JObject()
             {
                 { "title", title },
@@ -121,7 +214,8 @@ namespace WebServices.Controllers
                 { "time", time},
                 { "circuit", circuit},
                 { "url", url },
-                { "flag", flag }
+                { "flag", flag },
+                { "weather", weatherCd }
             }.ToString();
         }
         
@@ -129,6 +223,14 @@ namespace WebServices.Controllers
         public string GetTest([FromQuery]string shift)
         {
             return "Passed parameter is \'" + shift + "\'";
+        }
+
+
+        private static DateTime UnixTimeStampToDateTime(double unixTimeStamp, int shift)
+        {
+            System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
+            dtDateTime = dtDateTime.AddSeconds(unixTimeStamp+shift);
+            return dtDateTime;
         }
     }
 }
