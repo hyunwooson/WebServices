@@ -67,7 +67,14 @@ namespace WebServices.Controllers
 
             title = evntName.Substring(0, evntName.IndexOf("2020") - 1);
             session = evntName.Substring(evntName.IndexOf("-") + 2);
-            date = evntTime.AddSeconds(timeShift).ToString("MMM. d, yyyy");
+
+            if (evntTime.AddSeconds(timeShift).Date == DateTime.UtcNow.AddSeconds(timeShift).Date)
+                date = "Today";
+            else if (evntTime.AddSeconds(timeShift).Date == DateTime.UtcNow.AddDays(1).AddSeconds(timeShift).Date)
+                date = "Tomorrow";
+            else
+                date = evntTime.AddSeconds(timeShift).ToString("MMM. d, yyyy");
+
             time = evntTime.AddSeconds(timeShift).ToString("HH:mm");
 
 

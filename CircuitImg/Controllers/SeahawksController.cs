@@ -76,7 +76,13 @@ namespace WebServices.Controllers
                 }
             }
 
-            date = evntTime.AddSeconds(timeShift).ToString("MMM. d, yyyy");
+            if (evntTime.AddSeconds(timeShift).Date == DateTime.UtcNow.AddSeconds(timeShift).Date)
+                date = "Today";
+            else if (evntTime.AddSeconds(timeShift).Date == DateTime.UtcNow.AddDays(1).AddSeconds(timeShift).Date)
+                date = "Tomorrow";
+            else
+                date = evntTime.AddSeconds(timeShift).ToString("MMM. d, yyyy");
+
             time = evntTime.AddSeconds(timeShift).ToString("HH:mm");
 
 
