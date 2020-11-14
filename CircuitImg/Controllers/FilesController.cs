@@ -10,43 +10,63 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebServices.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class FilesController : ControllerBase
     {
+        #region KBO
         [HttpGet]
-        [Route("image/kbo/emblems")]
-        public ActionResult Getimage(string team)
+        [Route("kbo/emblems")]
+        public ActionResult GetKBOteamimage(string team)
         {
             if (team == null)
                 team = "";
-            switch (team.ToLower())
-            {
-                case "doosan":
-                    return File(WebServices.Properties.Resource.doosan, "image/png");
-                case "nc":
-                    return File(WebServices.Properties.Resource.nc, "image/png");
-                case "kt":
-                    return File(WebServices.Properties.Resource.kt, "image/png");
-                case "samsung":
-                    return File(WebServices.Properties.Resource.samsung, "image/png");
-                case "lotte":
-                    return File(WebServices.Properties.Resource.lotte, "image/png");
-                case "hanwha":
-                    return File(WebServices.Properties.Resource.hanwha, "image/png");
-                case "lg":
-                    return File(WebServices.Properties.Resource.lg, "image/png");
-                case "kia":
-                    return File(WebServices.Properties.Resource.kia, "image/png");
-                case "kiwoom":
-                    return File(WebServices.Properties.Resource.kiwoom, "image/png");
-                case "sk":
-                    return File(WebServices.Properties.Resource.sk, "image/png");
 
+            var target = Properties.KBO.Resource.ResourceManager.GetObject(team.ToLower());
 
-                default:
-                    return File(WebServices.Properties.Resource.notfound, "image/png");
-            }
+            if (target != null)
+                return File((byte[])target, "image/png");
+            else
+                return File(Properties.Common.Resource.notfound, "image/png");
         }
+
+        [HttpGet]
+        [Route("kbo/title")]
+        public ActionResult GetKBOTitle(string title)
+        {
+            if (title == null)
+                title = "";
+
+            var target = Properties.KBO.Resource.ResourceManager.GetObject(title.ToLower());
+
+            if (target != null)
+                return File((byte[])target, "image/png");
+            else
+                return File(Properties.Common.Resource.notfound, "image/png");
+        }
+
+        #endregion
+
+        #region NFL
+        [HttpGet]
+        [Route("nfl/emblems")]
+        public ActionResult GetNFLteamimage(string team)
+        {
+            if (team == null)
+                team = "";
+            else if (int.TryParse(team[0].ToString(), out int a))
+                team = "_" + team;
+
+            var target = Properties.NFL.Resource.ResourceManager.GetObject(team.ToLower());
+
+            if (target != null)
+                return File((byte[])target, "image/png");
+            else
+                return File(Properties.Common.Resource.notfound, "image/png");
+        }
+        #endregion
+
+
+
     }
 }

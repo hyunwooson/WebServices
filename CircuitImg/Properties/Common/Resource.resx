@@ -118,37 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="doosan" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\doosan.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="hanwha" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\hanwha.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="kia" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\kia.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="kiwoom" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\kiwoom.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="kt" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\kt.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="lg" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\lg.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="lotte" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\lotte.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="nc" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\nc.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="notfound" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\notfound.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="samsung" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\samsung.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="sk" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\sk.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\..\Resources\notfound.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

@@ -14,8 +14,8 @@ namespace WebServices.Controllers
     [ApiController]
     public class BearsController : ControllerBase
     {
-        [HttpGet("game")]
-        public string Get(string _team)
+        [HttpGet()]
+        public string Get(string shift)
         {
             string gameTitle = "";
             string gameTime = "";
@@ -89,7 +89,7 @@ namespace WebServices.Controllers
             var gameTitleNode = targetNode.SelectSingleNode("//div[@class='BNeawe tAd8D AP7Wnd']");
             gameTitle = "";
             if (gameTitleNode != null)
-                gameTitle = targetNode.SelectSingleNode("//div[@class='BNeawe tAd8D AP7Wnd']").InnerText.Replace("�", "/");
+                gameTitle = targetNode.SelectSingleNode("//div[@class='BNeawe tAd8D AP7Wnd']").InnerText.Replace(" � ", "/");
 
             var awayInfoNode = targetNode.SelectSingleNode("//div[@class='AP66Yc Q38Sd']");
             string awayInfo = "";
@@ -121,14 +121,21 @@ namespace WebServices.Controllers
 
             bool home = homeTeam.Equals("Doosan");
 
+            awayScore = awayScore.Equals("") ? awayTeam: awayScore;
+            homeScore = homeScore.Equals("") ? homeTeam: homeScore;
+
+            string title = gameTitle.ToLower().Contains("korean") ? "ks" : gameTitle.Length < 5 ? "kbo" : "ps";
+
+
             return new JObject()
             {
-                {"vs", home? "vs" : "@"},
+                { "vs" , home? "vs" : "@"},
                 { "gameTitle", gameTitle },
                 { "gameTime" , gameTime  },
-                { "oppScore", home? awayScore: homeScore },
+                { "oppScore", home? awayScore : homeScore },
                 { "oppTeam" , home? awayTeam : homeTeam  },
-                { "bearsScore", home? homeScore:awayScore },
+                { "bearsScore" , home? homeScore : awayScore },
+                { "title" , title}
             }.ToString();
         }
     }

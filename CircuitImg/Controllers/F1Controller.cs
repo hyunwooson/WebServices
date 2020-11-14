@@ -12,7 +12,7 @@ using System.IO;
 namespace WebServices.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class F1Controller : ControllerBase
     {
         

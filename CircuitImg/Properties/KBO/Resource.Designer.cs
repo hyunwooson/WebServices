@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace WebServices.Properties {
+namespace WebServices.Properties.KBO {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace WebServices.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("WebServices.Properties.Resource", typeof(Resource).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("WebServices.Properties.KBO.Resource", typeof(Resource).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -83,6 +83,16 @@ namespace WebServices.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] kbo {
+            get {
+                object obj = ResourceManager.GetObject("kbo", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] kia {
             get {
                 object obj = ResourceManager.GetObject("kia", resourceCulture);
@@ -96,6 +106,16 @@ namespace WebServices.Properties {
         internal static byte[] kiwoom {
             get {
                 object obj = ResourceManager.GetObject("kiwoom", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] ks {
+            get {
+                object obj = ResourceManager.GetObject("ks", resourceCulture);
                 return ((byte[])(obj));
             }
         }
@@ -136,16 +156,6 @@ namespace WebServices.Properties {
         internal static byte[] nc {
             get {
                 object obj = ResourceManager.GetObject("nc", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] notfound {
-            get {
-                object obj = ResourceManager.GetObject("notfound", resourceCulture);
                 return ((byte[])(obj));
             }
         }
