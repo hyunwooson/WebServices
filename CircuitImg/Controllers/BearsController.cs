@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
 using Microsoft.AspNetCore.Http;
@@ -15,7 +17,7 @@ namespace WebServices.Controllers
     public class BearsController : ControllerBase
     {
         [HttpGet()]
-        public string Get(string shift)
+        public string Get(string loc)
         {
             string gameTitle = "";
             string gameTime = "";
@@ -23,6 +25,13 @@ namespace WebServices.Controllers
             string awayTeam = "";
             string homeScore = "";
             string homeTeam = "";
+
+            //var loc = "CA,United states";
+
+            char middleChar = Convert.ToChar(65 + (loc.Length > 31 ? loc.Length - 6 : loc.Length));
+
+            var uule = "w+CAIQICI" + middleChar + Convert.ToBase64String(Encoding.UTF8.GetBytes(loc));
+
 
             HtmlDocument doc = new HtmlDocument();
             HtmlNode targetNode = null;
@@ -47,7 +56,7 @@ namespace WebServices.Controllers
 
                 using (WebClient client = new WebClient())
                 {
-                    htmlCode = client.DownloadString($"https://www.google.com/search?q={searchText.Replace(' ', '+')}&hl=en");
+                    htmlCode = client.DownloadString($"https://www.google.com/search?q={searchText.Replace(' ', '+')}&hl=en&uule={uule}");
                 }
 
                 doc.LoadHtml(htmlCode);
@@ -88,6 +97,7 @@ namespace WebServices.Controllers
                     break;
                 }
             }
+
 
             if (targetNode == null)
             {
@@ -151,7 +161,7 @@ namespace WebServices.Controllers
                 { "oppScore", home? awayScore : homeScore },
                 { "oppTeam" , home? awayTeam : homeTeam  },
                 { "bearsScore" , home? homeScore : awayScore },
-                { "title" , title}
+                { "title" , title},
             }.ToString();
         }
     }

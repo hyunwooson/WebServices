@@ -148,11 +148,15 @@ namespace WebServices.Controllers
 
             string weatherCd = "";
 
+
+
             if (result.TryGetValue("cod",out JToken jt))
             {
             }
             else
             {
+                double timezone = result["timezone_offset"].Value<double>();
+
                 if (date.Equals("Today")|| date.Equals("Tomorrow"))
                 {
                     var array = result["hourly"].Value<JArray>();
@@ -171,10 +175,10 @@ namespace WebServices.Controllers
                     foreach (var item in forecasts_d)
                     {
                         var weatime = UnixTimeStampToDateTime(item.dt, 0);
-                        if (evntTime.Date.Equals(weatime.Date))
+                        if (evntTime.AddSeconds(timezone).Date.Equals(weatime.AddSeconds(timezone).Date))
                         {
-                            var sunsetTime = UnixTimeStampToDateTime(item.sunset, 0);
-                            if (evntTime.AddHours(1) > sunsetTime)
+                            var sunsetTime = UnixTimeStampToDateTime(item.sunset, timezone);
+                            if (evntTime.AddSeconds(timezone).AddHours(1) > sunsetTime)
                                 weatherCd = weatherCd + "_n";
                            
                             break;
@@ -189,9 +193,9 @@ namespace WebServices.Controllers
                     foreach (var item in forecasts)
                     {
                         var weatime = UnixTimeStampToDateTime(item.dt, 0);
-                        if (evntTime.Date.Equals(weatime.Date))
+                        if (evntTime.AddSeconds(timezone).Date.Equals(weatime.AddSeconds(timezone).Date))
                         {
-                            if (evntTime.AddHours(1) > UnixTimeStampToDateTime(item.sunset, 0))
+                            if (evntTime.AddSeconds(timezone).AddHours(1) > UnixTimeStampToDateTime(item.sunset, timezone))
                                 weatherCd = item.weather[0].id + "_n";
                             else
                                 weatherCd = item.weather[0].id;
@@ -224,7 +228,7 @@ namespace WebServices.Controllers
         }
 
 
-        private static DateTime UnixTimeStampToDateTime(double unixTimeStamp, int shift)
+        private static DateTime UnixTimeStampToDateTime(double unixTimeStamp, double shift)
         {
             System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
             dtDateTime = dtDateTime.AddSeconds(unixTimeStamp+shift);
