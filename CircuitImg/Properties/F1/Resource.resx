@@ -117,16 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="BAHRAIN_INTERNATIONAL_CIRCUIT" xml:space="preserve">
+  <data name="BAHRAIN" xml:space="preserve">
     <value>26.0336079,50.5081322</value>
   </data>
-  <data name="BAHRAIN_INTERNATIONAL_CIRCUIT_-_OUTER_TRACK" xml:space="preserve">
-    <value>26.0336079,50.5081322</value>
-  </data>
-  <data name="INTERCITY_ISTANBUL_PARK" xml:space="preserve">
+  <data name="INTERCITY" xml:space="preserve">
     <value>40.957914,29.4116749</value>
   </data>
-  <data name="YAS_MARINA_CIRCUIT" xml:space="preserve">
+  <data name="YAS" xml:space="preserve">
     <value>24.4698914,54.603292</value>
   </data>
 </root>

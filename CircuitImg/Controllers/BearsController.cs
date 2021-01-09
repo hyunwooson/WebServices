@@ -84,7 +84,7 @@ namespace WebServices.Controllers
                         bool continueFlag = false;
                         foreach (var item in _gtArray)
                         {
-                            if(DateTime.TryParse(item.Trim(), out DateTime dt) && dt< DateTime.Today)
+                            if (DateTime.TryParse(item.Trim(), out DateTime dt) && dt< DateTime.Today)
                             {
                                 continueFlag = true;
                                 break;
@@ -99,16 +99,18 @@ namespace WebServices.Controllers
             }
 
 
+
             if (targetNode == null)
             {
                 return new JObject()
                 {
-                    {"vs", "vs."},
-                    { "gameTitle", gameTitle },
-                    { "gameTime" , gameTime  },
-                    { "oppScore", awayScore },
-                    { "oppTeam" , awayTeam  },
-                    { "bearsScore", homeScore },
+                    { "vs" , ""},
+                    { "gameTitle", "" },
+                    { "gameTime" , ""  },
+                    { "oppScore", "" },
+                    { "oppTeam" , ""  },
+                    { "bearsScore" , "" },
+                    { "title" , "" },
                 }.ToString();
             }
 
@@ -152,6 +154,27 @@ namespace WebServices.Controllers
 
             string title = gameTitle.ToLower().Contains("korean") ? "ks" : gameTitle.Length < 5 ? "kbo" : "ps";
 
+            if (gameTime.ToUpper().Contains("FINAL"))
+            {
+                var _gtArray = gameTime.Split(',');
+                foreach (var item in _gtArray)
+                {
+                    if (DateTime.TryParse(item.Trim(), out DateTime dt)
+                        && gameTitle.Contains("Korean Series"))
+                    {
+                        return new JObject()
+                        {
+                            { "vs" , "vs"},
+                            { "gameTitle", "Season Ended/Finished in 2nd" },
+                            { "gameTime" , ""  },
+                            { "oppScore", "" },
+                            { "oppTeam" , "TBA"  },
+                            { "bearsScore" , "Bears" },
+                            { "title" , "kbo" },
+                        }.ToString();
+                    }
+                }
+            }
 
             return new JObject()
             {

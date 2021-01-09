@@ -63,36 +63,27 @@ namespace WebServices.Properties.F1 {
         /// <summary>
         ///   Looks up a localized string similar to 26.0336079,50.5081322.
         /// </summary>
-        internal static string BAHRAIN_INTERNATIONAL_CIRCUIT {
+        internal static string BAHRAIN {
             get {
-                return ResourceManager.GetString("BAHRAIN_INTERNATIONAL_CIRCUIT", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 26.0336079,50.5081322.
-        /// </summary>
-        internal static string BAHRAIN_INTERNATIONAL_CIRCUIT___OUTER_TRACK {
-            get {
-                return ResourceManager.GetString("BAHRAIN_INTERNATIONAL_CIRCUIT_-_OUTER_TRACK", resourceCulture);
+                return ResourceManager.GetString("BAHRAIN", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to 40.957914,29.4116749.
         /// </summary>
-        internal static string INTERCITY_ISTANBUL_PARK {
+        internal static string INTERCITY {
             get {
-                return ResourceManager.GetString("INTERCITY_ISTANBUL_PARK", resourceCulture);
+                return ResourceManager.GetString("INTERCITY", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to 24.4698914,54.603292.
         /// </summary>
-        internal static string YAS_MARINA_CIRCUIT {
+        internal static string YAS {
             get {
-                return ResourceManager.GetString("YAS_MARINA_CIRCUIT", resourceCulture);
+                return ResourceManager.GetString("YAS", resourceCulture);
             }
         }
     }

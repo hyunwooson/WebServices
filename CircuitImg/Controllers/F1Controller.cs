@@ -20,6 +20,7 @@ namespace WebServices.Controllers
             public double dt;
             public double sunset;
             public string night = "";
+            public object temp;
             public List<Weather> weather;
         }
         public class Weather
@@ -60,8 +61,12 @@ namespace WebServices.Controllers
             }
             var calendar = Calendar.Load(text);
 
+            var seasonYear = calendar.Events[0].Start.AsUtc.Year;
+
             string evntName = "";
             var evntTime = new DateTime();
+            bool seasonEnd = true;
+
             for (int i = 0; i < calendar.Events.Count; i++)
             {
                 if (DateTime.UtcNow < calendar.Events[i].Start.AsUtc)
@@ -69,11 +74,28 @@ namespace WebServices.Controllers
                     evntName = calendar.Events[i].Summary;
                     evntTime = calendar.Events[i].Start.AsUtc;
                     circuit = calendar.Events[i].Location;
-                    var loc = Properties.F1.Resource.ResourceManager.GetObject(circuit.ToUpper().Replace(' ', '_')).ToString().Split(',');
+                    var loc = Properties.F1.Resource.ResourceManager.GetObject(circuit.Split(' ')[0]).ToString().Split(',');
                     lateral = loc[0];
                     longitudinal = loc[1];
+                    seasonEnd = false;
                     break;
                 }
+            }
+
+            if (seasonEnd)
+            {
+                return new JObject()
+                {
+                    { "title", $"{seasonYear} FORMULA 1 WORLD CHAMPIONSHIP™" },
+                    { "session", "ENDED" },
+                    { "date", "TBA" },
+                    { "time", "TBA"},
+                    { "circuit", "TBA"},
+                    { "url", "http://210.2.41.217:8880/files/kbo/emblems?team=TBA" },
+                    { "flag", "" },
+                    { "weather", "_000" },
+                    { "temp", "" }
+            }.ToString();
             }
 
             string title = evntName.Substring(0, evntName.IndexOf("2020") - 1);
@@ -146,14 +168,11 @@ namespace WebServices.Controllers
 
             var result = JObject.Parse(resultTxt);
 
-            string weatherCd = "";
+            string weatherCd = "000";
+            double temp = 0;
 
 
-
-            if (result.TryGetValue("cod",out JToken jt))
-            {
-            }
-            else
+            if (!result.TryGetValue("cod",out JToken jt))
             {
                 double timezone = result["timezone_offset"].Value<double>();
 
@@ -167,6 +186,7 @@ namespace WebServices.Controllers
                         if (evntTime < weatime)
                         {
                             weatherCd = item.weather[0].id;
+                            temp = Math.Round(double.Parse(item.temp.ToString()) - 273.15,0);
                             break;
                         }
                     }
@@ -180,7 +200,6 @@ namespace WebServices.Controllers
                             var sunsetTime = UnixTimeStampToDateTime(item.sunset, timezone);
                             if (evntTime.AddSeconds(timezone).AddHours(1) > sunsetTime)
                                 weatherCd = weatherCd + "_n";
-                           
                             break;
                         }
                     }
@@ -196,13 +215,18 @@ namespace WebServices.Controllers
                         if (evntTime.AddSeconds(timezone).Date.Equals(weatime.AddSeconds(timezone).Date))
                         {
                             if (evntTime.AddSeconds(timezone).AddHours(1) > UnixTimeStampToDateTime(item.sunset, timezone))
+                            {
                                 weatherCd = item.weather[0].id + "_n";
+                                temp = Math.Round(double.Parse(((JObject)item.temp)["night"].ToString()) - 273.15, 0);
+                            }
                             else
+                            {
                                 weatherCd = item.weather[0].id;
+                                temp = Math.Round(double.Parse(((JObject)item.temp)["day"].ToString()) - 273.15, 0);
+                            }
                             break;
                         }
                     }
-                    weatherCd = "_000";
                 }
             }
 
@@ -217,7 +241,8 @@ namespace WebServices.Controllers
                 { "circuit", circuit},
                 { "url", url },
                 { "flag", flag },
-                { "weather", weatherCd }
+                { "weather", "_" + weatherCd },
+                { "temp", weatherCd.Equals("000")? "" : temp + "°C" }
             }.ToString();
         }
         

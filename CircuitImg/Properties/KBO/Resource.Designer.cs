@@ -179,5 +179,15 @@ namespace WebServices.Properties.KBO {
                 return ((byte[])(obj));
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] tba {
+            get {
+                object obj = ResourceManager.GetObject("tba", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }
