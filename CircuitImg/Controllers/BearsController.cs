@@ -165,7 +165,7 @@ namespace WebServices.Controllers
                         return new JObject()
                         {
                             { "vs" , "vs"},
-                            { "gameTitle", "Season Ended/Finished in 2nd" },
+                            { "gameTitle", "Season Ended" },
                             { "gameTime" , ""  },
                             { "oppScore", "" },
                             { "oppTeam" , "TBA"  },
