@@ -187,6 +187,63 @@ namespace WebServices.Controllers
                 { "title" , title},
             }.ToString();
         }
+
+        [HttpGet("standings")]
+        public string GetStandings()
+        {
+            JObject rslt = new JObject();
+            try
+            {
+                HtmlDocument doc = new HtmlDocument();
+                HtmlNode targetNode = null;
+
+                string htmlCode = "";
+
+                using (WebClient client = new WebClient())
+                {
+                    htmlCode = client.DownloadString($"http://eng.koreabaseball.com/Standings/TeamStandings.aspx?searchDate=2021-12-31");
+                }
+
+                doc.LoadHtml(htmlCode);
+
+                var headers = doc.DocumentNode.SelectNodes("//tr/th");
+
+                int i = 0;
+                foreach (var row in doc.DocumentNode.SelectSingleNode("//table[@summary='team standings']").SelectNodes("//tr[td]"))
+                {
+                    if (i >= 10)
+                        break;
+                    var _arr = row.SelectNodes("td").Select(td => td.InnerText).ToArray();
+                    string _s = "";
+                    _s += _arr[0] + ";";
+                    _s += _arr[1] + ";";
+                    _s += _arr[3] + ";";
+                    _s += _arr[4] + ";";
+                    _s += _arr[5] + ";";
+                    _s += _arr[7] + ";";
+                    rslt.Add($"pos{++i}", _s);
+                }
+            }
+            catch (Exception)
+            {
+                rslt = new JObject()
+                {
+                    { "pos1" , "1;ERR;00;00;00;00.0;" },
+                    { "pos2" , "2;ERR;00;00;00;00.0;" },
+                    { "pos3" , "3;ERR;00;00;00;00.0;" },
+                    { "pos4" , "4;ERR;00;00;00;00.0;" },
+                    { "pos5" , "5;ERR;00;00;00;00.0;" },
+                    { "pos6" , "6;ERR;00;00;00;00.0;" },
+                    { "pos7" , "7;ERR;00;00;00;00.0;" },
+                    { "pos8" , "8;ERR;00;00;00;00.0;" },
+                    { "pos9" , "9;ERR;00;00;00;00.0;" },
+                    { "pos10" , "10;ERR;00;00;00;00.0;" },
+                };
+
+            }
+
+            return rslt.ToString();
+        }
     }
 }
 
