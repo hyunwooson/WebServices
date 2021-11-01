@@ -112,7 +112,7 @@ namespace WebServices.Controllers
 
                 using (WebClient client = new WebClient())
                 {
-                    htmlCode = client.DownloadString($"https://www.nfl.com/standings/");
+                    htmlCode = client.DownloadString($"https://www.nfl.com/standings/division/2021/REG");
                 }
 
                 doc.LoadHtml(htmlCode);

@@ -102,7 +102,7 @@ namespace WebServices.Controllers
 
                 string title = evntName.Substring(0, evntName.IndexOf(DateTime.Now.Year.ToString()) - 1);
 
-                string session = evntName.Substring(evntName.LastIndexOf('-') + 2);
+                string session = evntName.Split(new char[] { '–', '-' }).Last().Trim();
 
                 string date;
                 if (evntTime.AddSeconds(timeShift).Date == DateTime.UtcNow.AddSeconds(timeShift).Date)
