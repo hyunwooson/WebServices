@@ -19,12 +19,7 @@ namespace WebServices.Controllers
         [HttpGet()]
         public string Get(string loc)
         {
-            string gameTitle = "";
             string gameTime = "";
-            string awayScore = "";
-            string awayTeam = "";
-            string homeScore = "";
-            string homeTeam = "";
 
             //var loc = "CA,United states";
 
@@ -115,7 +110,7 @@ namespace WebServices.Controllers
             }
 
             var gameTitleNode = targetNode.SelectSingleNode("//div[@class='BNeawe tAd8D AP7Wnd']");
-            gameTitle = "";
+            string gameTitle = "";
             if (gameTitleNode != null)
                 gameTitle = targetNode.SelectSingleNode("//div[@class='BNeawe tAd8D AP7Wnd']").InnerText.Replace(" � ", "/");
 
@@ -123,8 +118,8 @@ namespace WebServices.Controllers
             string awayInfo = "";
             if (awayInfoNode != null)
                 awayInfo = targetNode.SelectSingleNode("//div[@class='AP66Yc Q38Sd']").InnerText;
-            awayTeam = "";
-            awayScore = "";
+            string awayTeam = "";
+            string awayScore = "";
             foreach (var _ch in awayInfo)
             {
                 if (int.TryParse(_ch.ToString(), out int a))
@@ -137,8 +132,8 @@ namespace WebServices.Controllers
             string homeInfo = "";
             if (homeInfoNode != null)
                 homeInfo = targetNode.SelectSingleNode("//div[@class='AP66Yc']").InnerText;
-            homeTeam = "";
-            homeScore = "";
+            string homeTeam = "";
+            string homeScore = "";
             foreach (var _ch in homeInfo)
             {
                 if (int.TryParse(_ch.ToString(), out int a))
@@ -152,7 +147,24 @@ namespace WebServices.Controllers
             awayScore = awayScore.Equals("") ? awayTeam: awayScore;
             homeScore = homeScore.Equals("") ? homeTeam: homeScore;
 
-            string title = gameTitle.ToLower().Contains("korean") ? "ks" : gameTitle.Length < 5 ? "kbo" : "ps";
+            string title;
+
+            if (gameTitle.ToLower().Contains("korean"))
+            {
+                title = "ks";
+            }
+            else if (gameTitle.ToLower().Contains("wild"))
+            {
+                title = "wild";
+            }
+            else if(gameTitle.Length < 5)
+            {
+                title = "kbo";
+            }
+            else
+            {
+                title = "ps";
+            }
 
             if (gameTime.ToUpper().Contains("FINAL"))
             {
@@ -195,7 +207,6 @@ namespace WebServices.Controllers
             try
             {
                 HtmlDocument doc = new HtmlDocument();
-                HtmlNode targetNode = null;
 
                 string htmlCode = "";
 
