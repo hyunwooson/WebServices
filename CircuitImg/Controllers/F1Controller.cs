@@ -11,6 +11,7 @@ using System.IO;
 using System.Data.SqlClient;
 using HtmlAgilityPack;
 using System.Data;
+using Ical.Net.CalendarComponents;
 
 namespace WebServices.Controllers
 {
@@ -40,6 +41,34 @@ namespace WebServices.Controllers
             _logger = logger;
         }
 
+        class RaceWeek
+        {
+            public class Session
+            {
+                public DateTime StartTimeUTC { get; set; }
+                public string SessionTitle;
+                public CalendarEvent Calendar;
+            }
+
+            public string GpTitle;
+            public List<Session> Sessions { get; set; }
+
+            public DateTime Start { get { return Sessions.OrderBy(s => s.StartTimeUTC).FirstOrDefault().StartTimeUTC; } }
+            public DateTime End { get { return Sessions.OrderBy(s => s.StartTimeUTC).LastOrDefault().StartTimeUTC; } }
+
+            public RaceWeek()
+            {
+                Sessions = new List<Session>();
+            }
+
+            public override string ToString()
+            {
+                return GpTitle + " // " + Start.ToString("MMMdd") + " - " + End.ToString("MMMdd");
+            }
+        }
+
+
+
         [HttpGet]
         public string Get(string shift)
         {
@@ -56,7 +85,43 @@ namespace WebServices.Controllers
 
                 string text = "";
 
-                var webRequest = WebRequest.Create(@"http://www.formula1.com/calendar/Formula_1_Official_Calendar.ics");
+                var webRequest = WebRequest.Create(@"https://calendar.google.com/calendar/ical/ekqk1nbdusr1baon1ic42oeeik%40group.calendar.google.com/public/basic.ics");
+
+
+                #region [Get GrandPrix Title from Formula1.com]
+                HtmlDocument doc = new HtmlDocument();
+
+                string htmlCode = "";
+
+                using (WebClient client = new WebClient())
+                {
+                    htmlCode = client.DownloadString($"https://www.formula1.com/en/racing/{DateTime.Now.Year}.html");
+                }
+
+                doc.LoadHtml(htmlCode);
+                var raceCards = doc.DocumentNode.SelectNodes($"//div[contains(@class, 'race-card ')]");
+
+                Dictionary<string,DateTime> eventTitleDic = new Dictionary<string, DateTime>();
+                foreach (var item in raceCards)
+                {
+                    HtmlDocument itemDoc = new HtmlDocument();
+                    itemDoc.LoadHtml(item.OuterHtml);
+
+                    var startMonth = itemDoc.DocumentNode.SelectSingleNode($"//span[@class='month-wrapper f1-wide--xxs']").InnerText.Split("-").FirstOrDefault();
+                    var startDate = itemDoc.DocumentNode.SelectSingleNode("//span[@class='start-date']").InnerText;
+
+                    var eventTitle = itemDoc.DocumentNode.SelectSingleNode($"//div[contains(@class, 'event-title ')]").InnerText;
+                    eventTitle = System.Web.HttpUtility.HtmlDecode(eventTitle);
+
+                    DateTime start = DateTime.ParseExact(DateTime.Now.Year + startMonth + startDate, "yyyyMMMdd", System.Globalization.CultureInfo.InvariantCulture);
+
+                    eventTitleDic.Add(eventTitle, start);
+                }
+
+                eventTitleDic = eventTitleDic.OrderBy(e => e.Value).ToDictionary(k => k.Key, v => v.Value);
+                #endregion
+
+
 
                 using (var response = webRequest.GetResponse())
                 using (var content = response.GetResponseStream())
@@ -66,30 +131,92 @@ namespace WebServices.Controllers
                 }
                 var calendar = Calendar.Load(text);
 
-                var seasonYear = calendar.Events[0].Start.AsUtc.Year;
 
                 string evntName = "";
                 var evntTime = new DateTime();
-                bool seasonEnd = true;
+                bool seasonEnd = false;
 
-                for (int i = 0; i < calendar.Events.Count; i++)
+                var events = calendar.Events.OrderBy(ev => ev.Start.AsUtc).Where(ev => ev.Start.Year == DateTime.Now.Year).ToList();
+                var races = events.Where(e => e.Summary.Contains("Race")).OrderBy(r => r.Start).ToList();
+                var seasonYear = races[0].Start.AsUtc.Year;
+                var eventTitles = eventTitleDic.Select(e => e.Key).ToList();
+
+
+                List<RaceWeek> SeasonCalendar = new List<RaceWeek>();
+
+                for (int i = 0; i < races.Count; i++)
                 {
-                    if (DateTime.UtcNow < calendar.Events[i].Start.AsUtc)
+                    string evntTitle = eventTitles[i];
+                    string evntKey = races[i].Summary.Split(":").LastOrDefault().Trim();
+
+                    var weekEvents = events.Where(e => e.Summary.Contains(evntKey)).OrderBy(e=>e.Start).ToList();
+
+                    RaceWeek week = new RaceWeek();
+                    week.GpTitle = evntTitle;
+                    for (int w = 0; w < weekEvents.Count; w++)
                     {
-                        evntName = calendar.Events[i].Summary.Trim();
-                        evntTime = calendar.Events[i].Start.AsUtc;
-                        circuit = calendar.Events[i].Location.Trim();
-                        seasonEnd = false;
+                        RaceWeek.Session sssn = new RaceWeek.Session();
+
+                        sssn.SessionTitle = weekEvents[w].Summary.Split(":").FirstOrDefault().Trim();
+                        sssn.StartTimeUTC = weekEvents[w].Start.AsUtc;
+                        sssn.Calendar = weekEvents[w];
+                        week.Sessions.Add(sssn);
+                    }
+
+                    SeasonCalendar.Add(week);
+                }
+
+                RaceWeek upcomingWeek = new RaceWeek();
+                RaceWeek.Session upcomingSession = new RaceWeek.Session();
+
+                for (int i = 0; i < SeasonCalendar.Count; i++)
+                {
+                    if(DateTime.UtcNow < SeasonCalendar[i].End)
+                    {
+                        upcomingWeek = SeasonCalendar[i];
+                        for (int j = 0; j < upcomingWeek.Sessions.Count; j++)
+                        {
+                            if (DateTime.UtcNow < upcomingWeek.Sessions[j].StartTimeUTC)
+                            {
+                                upcomingSession = upcomingWeek.Sessions[j];
+                                break;
+                            }
+                        }
                         break;
                     }
+                    seasonEnd = true;
                 }
+
+
+
+                //for (int i = 0; i < events.Count; i++)
+                //{
+                //    if (DateTime.UtcNow < events[i].Start.AsUtc)
+                //    {
+                //        evntName = events[i].Summary.Trim();
+                //        evntTime = events[i].Start.AsUtc;
+                //        circuit = events[i].Location.Trim();
+                //        seasonEnd = false;
+
+                //        if (evntName.ToUpper().Contains("CANCEL"))
+                //            continue;
+
+                //        break;
+                //    }
+                //}
+                circuit = upcomingSession.Calendar.Location;
 
                 if (seasonEnd)
                 {
                     return new JObject()
                     {
                         { "title", $"{seasonYear} FORMULA 1 WORLD CHAMPIONSHIP™" },
-                        { "session", "ENDED" },
+                        { "upcoming", "ENDED" },
+                        { "session01", "-----" },
+                        { "session02", "-----" },
+                        { "session03", "-----" },
+                        { "session04", "-----" },
+                        { "session05", "-----" },
                         { "date", "---. -, ----" },
                         { "time", "--:--"},
                         { "circuit", "TBA"},
@@ -100,7 +227,8 @@ namespace WebServices.Controllers
                     }.ToString();
                 }
 
-                string title = evntName.Substring(0, evntName.IndexOf(DateTime.Now.Year.ToString()) - 1);
+                string title = upcomingWeek.GpTitle;
+                //string title = evntName.Substring(0, evntName.IndexOf(DateTime.Now.Year.ToString()) - 1);
 
                 string session = evntName.Split(new char[] { '–', '-' }).Last().Trim();
 
@@ -219,8 +347,13 @@ namespace WebServices.Controllers
 
                 return new JObject()
                 {
-                    { "title", title },
-                    { "session", session },
+                    { "title", upcomingWeek.GpTitle },
+                    { "upcoming", upcomingSession.SessionTitle },
+                    { "session01", session },
+                    { "session02", session },
+                    { "session03", session },
+                    { "session04", session },
+                    { "session05", session },
                     { "date", date },
                     { "time", time},
                     { "circuit", circuit},
@@ -235,7 +368,12 @@ namespace WebServices.Controllers
                 return new JObject()
                     {
                         { "title", ex.Message },
-                        { "session", "ERROR" },
+                        { "upcoming", "ERROR" },
+                        { "session01", "ERROR" },
+                        { "session02", "ERROR" },
+                        { "session03", "ERROR" },
+                        { "session04", "ERROR" },
+                        { "session05", "ERROR" },
                         { "date", "---. -, ----" },
                         { "time", "--:--"},
                         { "circuit", "TBA"},
@@ -329,19 +467,20 @@ namespace WebServices.Controllers
             {
                 Dictionary<string, string> _flagDict = new Dictionary<string, string>()
                 {
-                    { "AUS", "https://ssl.gstatic.com/onebox/media/sports/logos/jSgw5z0EPOLzdUi-Aomq7Q_48x48.png" },
-                    { "CAN", "https://ssl.gstatic.com/onebox/media/sports/logos/H23oIEP6qK-zNc3O8abnIA_48x48.png" },
-                    { "ESP", "https://ssl.gstatic.com/onebox/media/sports/logos/5hLkf7KFHhmpaiOJQv8LmA_48x48.png" },
-                    { "FIN", "https://ssl.gstatic.com/onebox/media/sports/logos/OR16mUDJv-0yTyh-jxlaKQ_48x48.png" },
-                    { "FRA", "https://ssl.gstatic.com/onebox/media/sports/logos/z3JEQB3coEAGLCJBEUzQ2A_48x48.png" },
-                    { "GBR", "https://ssl.gstatic.com/onebox/media/sports/logos/6HRpt1RF_AbDUftxgVUoEw_48x48.png" },
-                    { "GER", "https://ssl.gstatic.com/onebox/media/sports/logos/h1FhPLmDg9AHXzhygqvVPg_48x48.png" },
-                    { "ITA", "https://ssl.gstatic.com/onebox/media/sports/logos/joYpsiaYi4GDCqhSRAq5Zg_48x48.png" },
-                    { "JPN", "https://ssl.gstatic.com/onebox/media/sports/logos/by4OltvtZz7taxuQtkiP3A_48x48.png" },
-                    { "MEX", "https://ssl.gstatic.com/onebox/media/sports/logos/yJF9xqmUGenD8108FJbg9A_48x48.png" },
-                    { "MON", "https://ssl.gstatic.com/onebox/media/sports/logos/CpHtpHDYt6p7c2iQiM324g_48x48.png" },
-                    { "NED", "https://ssl.gstatic.com/onebox/media/sports/logos/8GEqzfLegwFFpe6X2BODTg_48x48.png" },
-                    { "RAF", "https://ssl.gstatic.com/onebox/media/sports/logos/5Y6kOqiOIv2C1sP9C_BWtA_48x48.png" },
+                    { "AUS", "https://cdn.countryflags.com/thumbs/australia/flag-square-250.png" },
+                    { "CAN", "https://cdn.countryflags.com/thumbs/canada/flag-square-250.png" },
+                    { "ESP", "https://cdn.countryflags.com/thumbs/spain/flag-square-250.png" },
+                    { "FIN", "https://cdn.countryflags.com/thumbs/finland/flag-square-250.png" },
+                    { "FRA", "https://cdn.countryflags.com/thumbs/france/flag-square-250.png" },
+                    { "GBR", "https://cdn.countryflags.com/thumbs/united-kingdom/flag-square-250.png" },
+                    { "GER", "https://cdn.countryflags.com/thumbs/germany/flag-square-250.png" },
+                    { "ITA", "https://cdn.countryflags.com/thumbs/italia/flag-square-250.png" },
+                    { "JPN", "https://cdn.countryflags.com/thumbs/japan/flag-square-250.png" },
+                    { "MEX", "https://cdn.countryflags.com/thumbs/mexico/flag-square-250.png" },
+                    { "MON", "https://cdn.countryflags.com/thumbs/monaco/flag-square-250.png" },
+                    { "NED", "https://cdn.countryflags.com/thumbs/netherlands/flag-square-250.png" },
+                    { "RAF", "https://cdn.countryflags.com/thumbs/russia/flag-square-250.png" },
+                    { "THA", "https://cdn.countryflags.com/thumbs/thailand/flag-square-250.png" },
                 };
 
                 return _flagDict[nationality];
@@ -364,18 +503,26 @@ namespace WebServices.Controllers
 
                 string htmlCode = "";
 
-                using (WebClient client = new WebClient())
-                {
-                    htmlCode = client.DownloadString($"https://www.formula1.com/en/results.html/2021/drivers.html");
-                }
-
-                doc.LoadHtml(htmlCode);
-
-                var headers = doc.DocumentNode.SelectNodes("//tr/th");
-                
+                HtmlNode tableNode;
                 List<DriverInfo> DriverStandings = new List<DriverInfo>();
+                int thisYear = DateTime.Now.Year-2;
+                do
+                {
+                    using (WebClient client = new WebClient())
+                    {
+                        htmlCode = client.DownloadString($"https://www.formula1.com/en/results.html/{thisYear--}/drivers.html");
+                    }
 
-                foreach (var row in doc.DocumentNode.SelectSingleNode("//table[@class='resultsarchive-table']").SelectNodes("//tr[td]"))
+                    doc.LoadHtml(htmlCode);
+
+                    var headers = doc.DocumentNode.SelectNodes("//tr/th");
+
+
+                    tableNode = doc.DocumentNode.SelectSingleNode("//table[@class='resultsarchive-table']");
+
+                } while (tableNode == null);
+
+                foreach (var row in tableNode.SelectNodes("//tr[td]"))
                 {
                     if (DriverStandings.Count >= 10)
                         break;
