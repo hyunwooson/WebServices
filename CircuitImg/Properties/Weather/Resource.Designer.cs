@@ -219,5 +219,15 @@ namespace WebServices.Properties.Weather {
                 return ((byte[])(obj));
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] chqrd {
+            get {
+                object obj = ResourceManager.GetObject("chqrd", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }
