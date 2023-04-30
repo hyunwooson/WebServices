@@ -412,7 +412,7 @@ namespace WebServices.Controllers
                 var result = JObject.Parse(resultTxt);
 
                 weatherReport = result.ToObject<WeatherAPIResult>();
-                weatherReport.minutely = weatherReport.minutely.OrderBy(m => m.dt).ToList();
+                //weatherReport.minutely = weatherReport.minutely.OrderBy(m => m.dt).ToList();
                 weatherReport.daily = weatherReport.daily.OrderBy(d => d.dt).ToList();
                 weatherReport.hourly = weatherReport.hourly.OrderBy(h => h.dt).ToList();
 
@@ -765,33 +765,33 @@ namespace WebServices.Controllers
                 switch (team)
                 {
                     case "Mercedes":
-                        return "https://www.formula1.com/content/dam/fom-website/teams/2021/mercedes-logo.png.transform/2col/image.png";
+                        return "http://sonamoo456.iptime.org:8888/files/f1team?code=";
                     case "Red Bull":
                     case "Red Bull Racing RBPT":
-                        return "https://www.formula1.com/content/dam/fom-website/teams/2021/red-bull-racing-logo.png.transform/2col/image.png";
+                        return "http://sonamoo456.iptime.org:8888/files/f1team?code=Mercedes";
                     case "McLaren":
                     case "McLaren Mercedes":
-                        return "https://www.formula1.com/content/dam/fom-website/teams/2021/mclaren-logo.png.transform/2col/image.png";
+                        return "http://sonamoo456.iptime.org:8888/files/f1team?code=Mclaren";
                     case "Ferrari":
-                        return "https://www.formula1.com/content/dam/fom-website/teams/2021/ferrari-logo.png.transform/2col/image.png";
+                        return "http://sonamoo456.iptime.org:8888/files/f1team?code=Ferrari";
                     case "Alpine F1 Team":
                     case "Alpine Renault":
-                        return "https://www.formula1.com/content/dam/fom-website/teams/2021/alpine-logo.png.transform/2col/image.png";
+                        return "http://sonamoo456.iptime.org:8888/files/f1team?code=Alpine";
                     case "AlphaTauri":
                     case "AlphaTauri RBPT":
-                        return "https://www.formula1.com/content/dam/fom-website/teams/2021/alphatauri-logo.png.transform/2col/image.png";
+                        return "http://sonamoo456.iptime.org:8888/files/f1team?code=AlphaTauri";
                     case "Aston Martin":
                     case "Aston Martin Aramco Mercedes":
-                        return "https://www.formula1.com/content/dam/fom-website/teams/2021/aston-martin-logo.png.transform/2col/image.png";
+                        return "http://sonamoo456.iptime.org:8888/files/f1team?code=AstomMartin";
                     case "Haas F1 Team":
                     case "Haas Ferrari":
-                        return "https://www.formula1.com/content/dam/fom-website/teams/2021/haas-f1-team-logo.png.transform/2col/image.png";
+                        return "http://sonamoo456.iptime.org:8888/files/f1team?code=Haas";
                     case "Williams":
                     case "Williams Mercedes":
-                        return "https://www.formula1.com/content/dam/fom-website/teams/2021/williams-logo.png.transform/2col/image.png";
+                        return "http://sonamoo456.iptime.org:8888/files/f1team?code=Williams";
                     case "Alfa Romeo":
                     case "Alfa Romeo Ferrari":
-                        return "https://www.formula1.com/content/dam/fom-website/teams/2021/alfa-romeo-racing-logo.png.transform/2col/image.png";
+                        return "http://sonamoo456.iptime.org:8888/files/f1team?code=AlfaRomeo";
                     default:
                         return "000000";
                 }
@@ -898,33 +898,33 @@ namespace WebServices.Controllers
             switch (team)
             {
                 case "Mercedes":
-                    return "https://www.carlogos.org/car-logos/mercedes-benz-logo.png";
+                    return "http://sonamoo456.iptime.org:8888/files/f1team?code=Mercedes";
                 case "Red Bull":
                 case "Red Bull Racing RBPT":
-                    return "https://w7.pngwing.com/pngs/424/256/png-transparent-redbull-logo-red-bull-energy-drink-desktop-krating-daeng-logo-red-bull-mammal-carnivoran-orange.png";
+                    return "http://sonamoo456.iptime.org:8888/files/f1team?code=RedBull";
                 case "McLaren":
                 case "McLaren Mercedes":
-                    return "https://www.formula1.com/content/dam/fom-website/teams/2021/mclaren-logo.png.transform/2col/image.png";
+                    return "http://sonamoo456.iptime.org:8888/files/f1team?code=Mclaren";
                 case "Ferrari":
-                    return "https://www.carlogos.org/car-logos/scuderia-ferrari-logo-800x1050.png";
+                    return "http://sonamoo456.iptime.org:8888/files/f1team?code=Ferrari";
                 case "Alpine F1 Team":
                 case "Alpine Renault":
-                    return "https://www.formula1.com/content/dam/fom-website/teams/2021/alpine-logo.png.transform/2col/image.png";
+                    return "http://sonamoo456.iptime.org:8888/files/f1team?code=Alpine";
                 case "AlphaTauri":
                 case "AlphaTauri RBPT":
-                    return "https://cdn.freelogovectors.net/wp-content/uploads/2021/08/alphatauri_logo-freelogovectors.net_.png";
+                    return "http://sonamoo456.iptime.org:8888/files/f1team?code=AlphaTauri";
                 case "Aston Martin":
                 case "Aston Martin Aramco Mercedes":
-                    return "https://www.formula1.com/content/dam/fom-website/teams/2021/aston-martin-logo.png.transform/2col/image.png";
+                    return "http://sonamoo456.iptime.org:8888/files/f1team?code=AstonMartin";
                 case "Haas F1 Team":
                 case "Haas Ferrari":
-                    return "https://upload.wikimedia.org/wikipedia/commons/d/d4/Logo_Haas_F1.png";
+                    return "http://sonamoo456.iptime.org:8888/files/f1team?code=Haas";
                 case "Williams":
                 case "Williams Mercedes":
-                    return "https://www.formula1.com/content/dam/fom-website/teams/2021/williams-logo.png.transform/2col/image.png";
+                    return "http://sonamoo456.iptime.org:8888/files/f1team?code=Williams";
                 case "Alfa Romeo":
                 case "Alfa Romeo Ferrari":
-                    return "https://www.formula1.com/content/dam/fom-website/teams/2021/alfa-romeo-racing-logo.png.transform/2col/image.png";
+                    return "http://sonamoo456.iptime.org:8888/files/f1team?code=AlfaRomeo";
                 default:
                     return "000000";
             }

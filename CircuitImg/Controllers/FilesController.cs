@@ -95,6 +95,25 @@ namespace WebServices.Controllers
                 return File(Properties.Common.Resource.notfound, "image/png");
         }
         #endregion
+        #region F1 Team
+        [HttpGet]
+        [Route("f1team")]
+        public ActionResult GetF1TeamLogoIcon(string code)
+        {
+            
+            var target = Properties.F1.Resource.ResourceManager.GetObject(code);
+
+            if (target == null)
+            {
+                target = Properties.Weather.Resource.ResourceManager.GetObject("_000");
+            }
+
+            if (target != null)
+                return File((byte[])target, "image/png");
+            else
+                return File(Properties.Common.Resource.notfound, "image/png");
+        }
+        #endregion
 
     }
 }
